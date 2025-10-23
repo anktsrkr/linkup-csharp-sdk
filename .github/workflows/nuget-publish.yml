@@ -2,11 +2,11 @@ name: Publish NuGet Package
 
 on:
   release:
-    types: [published]
+    types: [published, prereleased]
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to deploy (e.g., v1.0.0)'
+        description: "Tag to deploy (e.g., v0.1.0)"
         required: true
         type: string
 
