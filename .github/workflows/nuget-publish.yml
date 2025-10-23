@@ -1,0 +1,53 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.x
+            9.x
+            10.x
+          cache: true
+          cache-dependency-path: "src/LinkupSdk/LinkupSdk.csproj"
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v1.1.1
+        with:
+          versionSpec: "5.x"
+
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v1.1.1
+        id: gitversion
+
+      - name: Restore dependencies
+        run: dotnet restore src/LinkupSdk/LinkupSdk.csproj
+
+      - name: Build the project
+        run: dotnet build src/LinkupSdk/LinkupSdk.csproj --configuration Release --no-restore
+
+      - name: Pack the NuGet package
+        run: dotnet pack src/LinkupSdk/LinkupSdk.csproj --configuration Release --no-build --output ./nupkg /p:PackageVersion=${{ steps.gitversion.outputs.semVer }}
+
+      - name: Publish NuGet package
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/*-beta ]]; then
+            dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+          else
+            dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+          fi
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,36 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+# Build outputs
+/src/LinkupSdk/bin
+/src/LinkupSdk/obj
+
+# User-specific files
+/.vs
+*.user
+*.suo
+
+# IDE files
+.vscode/settings.json
+.idea/
+
+# NuGet packages
+*.nupkg
+nupkg/
+
+# Test results
+TestResults/
+*.trx
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
