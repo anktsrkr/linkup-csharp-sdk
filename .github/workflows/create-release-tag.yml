@@ -3,7 +3,8 @@ name: Create Release Tag
 on:
   push:
     branches:
-      - master
+      - main
+      - release/*
 jobs:
   create-tag:
     runs-on: ubuntu-latest
@@ -35,13 +36,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-
-          if [[ "${{ github.ref }}" == refs/heads/release/* ]]; then
-            TAG_NAME="v${{ steps.gitversion.outputs.semVer }}"
-          else
-            TAG_NAME="v${{ steps.gitversion.outputs.semVer }}"
-          fi
-
+          TAG_NAME="v${{ steps.gitversion.outputs.semVer }}"
           git tag $TAG_NAME
           git push origin $TAG_NAME
 
@@ -50,8 +45,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.TAG_NAME }}
-          release_name: Release ${{ env.TAG_NAME }}
+          tag_name: v${{ steps.gitversion.outputs.semVer }}
+          release_name: Release v${{ steps.gitversion.outputs.semVer }}
           body: |
             ## Changes in this release
             - Automated release created from ${{ github.ref }}
