@@ -41,6 +41,15 @@ jobs:
       - name: Pack the NuGet package
         run: dotnet pack src/LinkupSdk/LinkupSdk.csproj --configuration Release --no-build --output ./nupkg /p:PackageVersion=${{ steps.gitversion.outputs.semVer }}
 
+      - name: Manual Approval
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.TOKEN }}
+          approvers: ${{ github.repository_owner }}
+          minimum-approvals: 1
+          issue-title: "Deploy to NuGet: ${{ steps.gitversion.outputs.semVer }}"
+          issue-body: "Please approve or deny the deployment of version ${{ steps.gitversion.outputs.semVer }} to NuGet."
+
       - name: Publish NuGet package
         run: |
           if [[ "${{ github.ref }}" == refs/tags/*-beta ]]; then
