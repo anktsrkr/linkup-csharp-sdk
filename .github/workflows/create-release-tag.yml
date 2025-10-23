@@ -1,0 +1,60 @@
+name: Create Release Tag
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.x
+            9.x
+            10.x
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v1.1.1
+        with:
+          versionSpec: "5.x"
+
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v1.1.1
+        id: gitversion
+
+      - name: Create and push tag
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          if [[ "${{ github.ref }}" == refs/heads/release/* ]]; then
+            TAG_NAME="v${{ steps.gitversion.outputs.semVer }}"
+          else
+            TAG_NAME="v${{ steps.gitversion.outputs.semVer }}"
+          fi
+
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          release_name: Release ${{ env.TAG_NAME }}
+          body: |
+            ## Changes in this release
+            - Automated release created from ${{ github.ref }}
+            - Version: ${{ steps.gitversion.outputs.semVer }}
+          draft: false
+          prerelease: ${{ contains(github.ref, 'release/') }}
