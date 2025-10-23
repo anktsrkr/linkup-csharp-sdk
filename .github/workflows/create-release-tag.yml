@@ -3,7 +3,8 @@ name: Create Release Tag
 on:
   push:
     branches:
-      - master
+      - main
+      - release/*
 jobs:
   create-tag:
     runs-on: ubuntu-latest
