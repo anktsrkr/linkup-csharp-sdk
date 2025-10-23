@@ -3,19 +3,7 @@ branches:
   main:
     regex: ^main$
     mode: ContinuousDelivery
-    label: ""
-    increment: Patch
-    prevent-increment:
-      of-merged-branch: true
-    track-merge-target: false
-    tracks-release-branches: false
-    is-release-branch: false
-    is-mainline: true
-    source-branches: []
-  master:
-    regex: ^master$
-    mode: ContinuousDelivery
-    label: ""
+    tag: ""
     increment: Patch
     prevent-increment:
       of-merged-branch: true
@@ -27,7 +15,7 @@ branches:
   release:
     regex: ^release[/-]
     mode: ManualDeployment
-    label: "beta"
+    tag: "beta"
     increment: Patch
     prevent-increment:
       of-merged-branch: false
@@ -35,19 +23,19 @@ branches:
     tracks-release-branches: false
     is-release-branch: true
     is-mainline: false
-    source-branches: ["main", "master"]
+    source-branches: ["main"]
   feature:
-    regex: ^feat(ure)?[/-]
-    mode: ManualDeployment
-    label: "{BranchName}"
-    increment: Inherit
+    regex: ^feature[/-]
+    mode: ContinuousDeployment
+    tag: "{BranchName}"
+    increment: Minor
     prevent-increment:
-      of-merged-branch: true
+      of-merged-branch: false
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: false
-    source-branches: ["main", "master"]
+    source-branches: ["main"]
 
 ignore:
   sha: []
@@ -55,9 +43,9 @@ ignore:
 merge-message-formats: {}
 
 # Version formatting configuration
-assembly-versioning-scheme: MajorMinor
-assembly-file-versioning-scheme: MajorMinor
-assembly-informational-format: "{Major}.{Minor}.x"
+assembly-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-scheme: MajorMinorPatch
+assembly-informational-format: "{Major}.{Minor}.{Patch}"
 major-version-bump-message: '\+semver:\s?(breaking|major)'
 minor-version-bump-message: '\+semver:\s?(feature|minor)'
 patch-version-bump-message: '\+semver:\s?(fix|patch)'
@@ -65,4 +53,3 @@ no-bump-message: '\+semver:\s?(none|skip)'
 
 # Initial version configuration
 next-version: 1.0.0
-
