@@ -10,6 +10,8 @@ branches:
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: true
+    source-branches: ["release"]
+    tracks-merge-target: false
   master:
     regex: ^master$
     mode: ContinuousDelivery
@@ -20,6 +22,8 @@ branches:
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: true
+    source-branches: ["release"]
+    tracks-merge-target: false
   release:
     regex: ^release?[/-]
     mode: ContinuousDelivery
@@ -30,6 +34,35 @@ branches:
     tracks-release-branches: false
     is-release-branch: true
     is-mainline: false
+    source-branches: ["feature"]
+  feature:
+    regex: ^feat(ure)?[/-]
+    mode: ContinuousDelivery
+    tag: "feature"
+    increment: Inherit
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    tracks-release-branches: false
+    is-release-branch: false
+    is-mainline: false
+    source-branches: ["main"]
+
 ignore:
   sha: []
+
 merge-message-formats: {}
+
+# Version formatting configuration
+assembly-versioning-scheme: MajorMinor
+assembly-file-versioning-scheme: MajorMinor
+assembly-informational-format: "{Major}.{Minor}.x"
+major-version-bump-message: '+semver:\s?(breaking|major)'
+minor-version-bump-message: '+semver:\s?(feature|minor)'
+patch-version-bump-message: '+semver:\s?(fix|patch)'
+no-bump-message: '+semver:\s?(none|skip)'
+
+# Initial version configuration
+next-version: 1.0.0
+
+# Format version
+format-version: 2
