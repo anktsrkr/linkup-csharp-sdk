@@ -54,10 +54,10 @@ merge-message-formats: {}
 assembly-versioning-scheme: MajorMinor
 assembly-file-versioning-scheme: MajorMinor
 assembly-informational-format: "{Major}.{Minor}.x"
-major-version-bump-message: '+semver:\s?(breaking|major)'
-minor-version-bump-message: '+semver:\s?(feature|minor)'
-patch-version-bump-message: '+semver:\s?(fix|patch)'
-no-bump-message: '+semver:\s?(none|skip)'
+major-version-bump-message: '\+semver:\s?(breaking|major)'
+minor-version-bump-message: '\+semver:\s?(feature|minor)'
+patch-version-bump-message: '\+semver:\s?(fix|patch)'
+no-bump-message: '\+semver:\s?(none|skip)'
 
 # Initial version configuration
 next-version: 1.0.0
