@@ -3,47 +3,51 @@ branches:
   main:
     regex: ^main$
     mode: ContinuousDelivery
-    tag: ""
+    label: ""
     increment: Patch
-    prevent-increment-of-merged-branch-version: true
+    prevent-increment:
+      of-merged-branch: true
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: true
-    source-branches: ["release"]
+    source-branches: []
   master:
     regex: ^master$
     mode: ContinuousDelivery
-    tag: ""
+    label: ""
     increment: Patch
-    prevent-increment-of-merged-branch-version: true
+    prevent-increment:
+      of-merged-branch: true
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: true
-    source-branches: ["release"]
+    source-branches: []
   release:
     regex: ^release[/-]
-    mode: ContinuousDelivery
-    tag: "beta"
+    mode: ManualDeployment
+    label: "beta"
     increment: Patch
-    prevent-increment-of-merged-branch-version: false
+    prevent-increment:
+      of-merged-branch: false
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: true
     is-mainline: false
-    source-branches: ["feature"]
+    source-branches: ["main", "master"]
   feature:
     regex: ^feat(ure)?[/-]
-    mode: ContinuousDelivery
-    tag: "feature"
+    mode: ManualDeployment
+    label: "{BranchName}"
     increment: Inherit
-    prevent-increment-of-merged-branch-version: true
+    prevent-increment:
+      of-merged-branch: true
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: false
-    source-branches: ["main"]
+    source-branches: ["main", "master"]
 
 ignore:
   sha: []
