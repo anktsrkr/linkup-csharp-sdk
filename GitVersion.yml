@@ -6,7 +6,7 @@ branches:
     tag: ""
     increment: Patch
     prevent-increment-of-merged-branch-version: true
-    tracks-merge-target: false
+    track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: true
@@ -17,18 +17,18 @@ branches:
     tag: ""
     increment: Patch
     prevent-increment-of-merged-branch-version: true
-    tracks-merge-target: false
+    track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: true
     source-branches: ["release"]
   release:
-    regex: ^release?[/-]
+    regex: ^release[/-]
     mode: ContinuousDelivery
     tag: "beta"
     increment: Patch
     prevent-increment-of-merged-branch-version: false
-    tracks-merge-target: false
+    track-merge-target: false
     tracks-release-branches: false
     is-release-branch: true
     is-mainline: false
@@ -39,7 +39,7 @@ branches:
     tag: "feature"
     increment: Inherit
     prevent-increment-of-merged-branch-version: true
-    tracks-merge-target: false
+    track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: false
