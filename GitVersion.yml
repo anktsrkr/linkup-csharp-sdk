@@ -62,5 +62,3 @@ no-bump-message: '+semver:\s?(none|skip)'
 # Initial version configuration
 next-version: 1.0.0
 
-# Format version
-format-version: 2
