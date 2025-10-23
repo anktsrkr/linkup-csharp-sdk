@@ -1,9 +1,14 @@
 name: Publish NuGet Package
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to deploy (e.g., v1.0.0)'
+        required: true
+        type: string
 
 jobs:
   publish:
@@ -12,6 +17,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.tag || github.event.release.tag_name }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -44,7 +52,7 @@ jobs:
       - name: Manual Approval
         uses: trstringer/manual-approval@v1
         with:
-          secret: ${{ github.TOKEN }}
+          secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: ${{ github.repository_owner }}
           minimum-approvals: 1
           issue-title: "Deploy to NuGet: ${{ steps.gitversion.outputs.semVer }}"
@@ -52,10 +60,11 @@ jobs:
 
       - name: Publish NuGet package
         run: |
-          if [[ "${{ github.ref }}" == refs/tags/*-beta ]]; then
-            dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+          TAG_NAME="${{ github.event.inputs.tag || github.event.release.tag_name }}"
+          if [[ "$TAG_NAME" == *-beta* ]]; then
+            dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
           else
-            dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+            dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
           fi
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
