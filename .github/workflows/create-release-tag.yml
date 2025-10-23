@@ -50,8 +50,9 @@ jobs:
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ steps.gitversion.outputs.semVer }}
         with:
-          tag_name: ${{ env.TAG_NAME }}
+          tag_name: v${{ env.TAG_NAME }}
           release_name: Release ${{ env.TAG_NAME }}
           body: |
             ## Changes in this release
