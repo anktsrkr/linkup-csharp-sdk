@@ -24,7 +24,7 @@ branches:
     source-branches: ["main"]
 
   feature:
-    regex: ^feature[/-]
+    regex: ^(feat|feature)[/-]
     mode: ContinuousDeployment
     tag: "alpha.{BranchName}"
     increment: Minor
