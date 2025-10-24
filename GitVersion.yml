@@ -10,18 +10,19 @@ branches:
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: true
-    source-branches: []
+    source-branches: ["release"]
 
   release:
     regex: ^release[/-]
     mode: ContinuousDelivery
     tag: "beta"
     increment: Patch
+    prevent-increment-of-merged-branch-version: false
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: true
     is-mainline: false
-    source-branches: ["main"]
+    source-branches: ["main", "feature"]
 
   feature:
     regex: ^(feat|feature)[/-]
