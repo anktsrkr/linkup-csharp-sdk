@@ -5,9 +5,14 @@ on:
     branches:
       - release/*
       - main
+  pull_request:
+    types: [closed]
+    branches:
+      - release/*
 jobs:
   create-tag:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && contains(github.event.pull_request.head.ref, 'feat/') || contains(github.event.pull_request.head.ref, 'feature/'))
 
     steps:
       - name: Checkout code
@@ -44,21 +49,5 @@ jobs:
           draft: false
           prerelease: ${{ contains(github.ref, 'release/') }}
           generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Trigger NuGet Publish Workflow
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'nuget-publish.yml',
-              ref: '${{ github.ref_name }}',
-              inputs: {
-                tag: 'v${{ steps.gitversion.outputs.semVer }}'
-              }
-            })
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
