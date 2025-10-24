@@ -3,12 +3,12 @@ name: Create Release Tag
 on:
   push:
     branches:
-      - release/*
+      - releases/*
       - main
   pull_request:
     types: [closed]
     branches:
-      - release/*
+      - releases/*
 jobs:
   create-tag:
     runs-on: ubuntu-latest
