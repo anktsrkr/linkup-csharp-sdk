@@ -32,14 +32,6 @@ jobs:
         uses: gittools/actions/gitversion/execute@v1.1.1
         id: gitversion
 
-      - name: Create and push tag
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          TAG_NAME="v${{ steps.gitversion.outputs.semVer }}"
-          git tag $TAG_NAME
-          git push origin $TAG_NAME
-
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
@@ -53,3 +45,11 @@ jobs:
             - Version: ${{ steps.gitversion.outputs.semVer }}
           draft: false
           prerelease: ${{ contains(github.ref, 'release/') }}
+
+      - name: Create and push tag
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          TAG_NAME="v${{ steps.gitversion.outputs.semVer }}"
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
