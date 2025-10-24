@@ -62,9 +62,10 @@ jobs:
       - name: Publish NuGet package
         run: |
           TAG_NAME="${{ github.event.inputs.tag || github.ref_name }}"
-          if [[ "$TAG_NAME" == *-beta* ]]; then
-            dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
-          else
+          # Always publish to GitHub NuGet registry
+          dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
+          # Additionally publish to NuGet.org if not beta and NUGET_API_KEY is set
+          if [[ "$TAG_NAME" != *-beta* ]] && [[ -n "$NUGET_API_KEY" ]]; then
             dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
           fi
         env:
