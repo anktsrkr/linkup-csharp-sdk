@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag to deploy (e.g., v0.1.0)"
+        description: "Tag to deploy (e.g., v0.1.0, v1.2.3-beta). If not provided, the current branch or tag will be used."
         required: true
         type: string
 
