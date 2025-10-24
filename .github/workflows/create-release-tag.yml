@@ -33,23 +33,16 @@ jobs:
         id: gitversion
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.gitversion.outputs.semVer }}
-          release_name: Release v${{ steps.gitversion.outputs.semVer }}
+          name: Release v${{ steps.gitversion.outputs.semVer }}
           body: |
             ## Changes in this release
             - Automated release created from ${{ github.ref }}
             - Version: ${{ steps.gitversion.outputs.semVer }}
           draft: false
           prerelease: ${{ contains(github.ref, 'release/') }}
-
-      - name: Create and push tag
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          TAG_NAME="v${{ steps.gitversion.outputs.semVer }}"
-          git tag $TAG_NAME
-          git push origin $TAG_NAME
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
