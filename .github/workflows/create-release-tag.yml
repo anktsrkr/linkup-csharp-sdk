@@ -5,9 +5,14 @@ on:
     branches:
       - release/*
       - main
+  pull_request:
+    types: [closed]
+    branches:
+      - release/*
 jobs:
   create-tag:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true && contains(github.event.pull_request.head.ref, 'feat/') || contains(github.event.pull_request.head.ref, 'feature/'))
 
     steps:
       - name: Checkout code
