@@ -1,68 +1,51 @@
 mode: ContinuousDelivery
+
 branches:
   main:
     regex: ^main$
     mode: ContinuousDelivery
-    label: ""
+    tag: ""
     increment: Patch
-    prevent-increment:
-      of-merged-branch: true
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: true
     source-branches: []
-  master:
-    regex: ^master$
-    mode: ContinuousDelivery
-    label: ""
-    increment: Patch
-    prevent-increment:
-      of-merged-branch: true
-    track-merge-target: false
-    tracks-release-branches: false
-    is-release-branch: false
-    is-mainline: true
-    source-branches: []
+
   release:
     regex: ^release[/-]
-    mode: ManualDeployment
-    label: "beta"
+    mode: ContinuousDelivery
+    tag: "beta"
     increment: Patch
-    prevent-increment:
-      of-merged-branch: false
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: true
     is-mainline: false
-    source-branches: ["main", "master"]
+    source-branches: ["main"]
+
   feature:
-    regex: ^feat(ure)?[/-]
-    mode: ManualDeployment
-    label: "{BranchName}"
-    increment: Inherit
-    prevent-increment:
-      of-merged-branch: true
+    regex: ^feature[/-]
+    mode: ContinuousDeployment
+    tag: "alpha.{BranchName}"
+    increment: Minor
     track-merge-target: false
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: false
-    source-branches: ["main", "master"]
+    source-branches: ["main", "release"]
 
 ignore:
   sha: []
 
 merge-message-formats: {}
 
-# Version formatting configuration
-assembly-versioning-scheme: MajorMinor
-assembly-file-versioning-scheme: MajorMinor
-assembly-informational-format: "{Major}.{Minor}.x"
+assembly-versioning-scheme: MajorMinorPatch
+assembly-file-versioning-scheme: MajorMinorPatch
+assembly-informational-format: "{Major}.{Minor}.{Patch}"
+
 major-version-bump-message: '\+semver:\s?(breaking|major)'
 minor-version-bump-message: '\+semver:\s?(feature|minor)'
 patch-version-bump-message: '\+semver:\s?(fix|patch)'
 no-bump-message: '\+semver:\s?(none|skip)'
 
-# Initial version configuration
 next-version: 1.0.0
-
