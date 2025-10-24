@@ -12,8 +12,6 @@
 name: "CodeQL Advanced"
 
 on:
-  push:
-    branches: ["main"]
   pull_request:
   schedule:
     - cron: "43 7 * * 5"
@@ -43,7 +41,7 @@ jobs:
       matrix:
         include:
           - language: csharp
-            build-mode: manual
+            build-mode: autobuild
         # CodeQL supports the following values keywords for 'language': 'actions', 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'rust', 'swift'
         # Use `c-cpp` to analyze code written in C, C++ or both
         # Use 'java-kotlin' to analyze code written in Java, Kotlin or both
@@ -86,11 +84,16 @@ jobs:
       # to build your code.
       # ℹī¸ Command-line programs to run using the OS shell.
       # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
-      - if: matrix.build-mode == 'manual'
+      - name: Autobuild
+        if: matrix.build-mode == 'autobuild'
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Build C# code
+        if: matrix.build-mode == 'manual'
         shell: bash
         run: |
           dotnet restore src/LinkupSdk/LinkupSdk.csproj
-          dotnet build src/LinkupSdk/LinkupSdk.csproj --configuration Release
+          dotnet build src/LinkupSdk/LinkupSdk.csproj --configuration Release --no-restore
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
