@@ -49,7 +49,7 @@ jobs:
       - name: Build C# Project
         run: |
           dotnet restore src/LinkupSdk/LinkupSdk.csproj
-          dotnet build src/LinkupSdk/LinkupSdk.csproj --configuration Release --no-restore
+          dotnet build src/LinkupSdk/LinkupSdk.csproj --configuration Debug --no-restore
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
