@@ -48,8 +48,8 @@ jobs:
       # Build step MUST be between init and analyze for manual build mode
       - name: Build C# Project
         run: |
-          dotnet restore src/LinkupSdk/LinkupSdk.csproj
-          dotnet build src/LinkupSdk/LinkupSdk.csproj --configuration Debug --no-restore
+          dotnet restore linkup-csharp-sdk.sln
+          dotnet build linkup-csharp-sdk.sln --configuration Debug --no-restore
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
