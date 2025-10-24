@@ -14,7 +14,7 @@ branches:
 
   release:
     regex: ^release[/-]
-    mode: ManualDeployment
+    mode: ContinuousDelivery
     tag: "beta"
     increment: Patch
     track-merge-target: false
