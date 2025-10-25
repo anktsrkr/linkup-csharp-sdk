@@ -12,6 +12,9 @@ env:
 
 jobs:
   build-and-package:
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
 
     steps:
