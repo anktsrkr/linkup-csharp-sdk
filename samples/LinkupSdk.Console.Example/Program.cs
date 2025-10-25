@@ -170,7 +170,7 @@ async Task PerformSearchAsync(LinkupClient client)
         {
             try
             {
-                structuredSchema = System.Text.Json.JsonSerializer.Deserialize<object>(schemaInput);
+                structuredSchema = JsonSerializer.Deserialize<object>(schemaInput);
             }
             catch
             {
@@ -193,7 +193,7 @@ async Task PerformSearchAsync(LinkupClient client)
         ToDate = toDate?.ToString("O"),
         IncludeInlineCitations = includeInlineCitations,
         IncludeSources = includeSources,
-        StructuredOutputSchema = structuredSchema != null ? System.Text.Json.JsonSerializer.Serialize(structuredSchema) : null
+        StructuredOutputSchema = structuredSchema != null ? JsonSerializer.Serialize(structuredSchema) : null
     };
 
     await AnsiConsole.Progress()
@@ -330,7 +330,7 @@ async Task PerformMicrosoftRevenueExampleAsync(LinkupClient client)
                         foreach (var source in structuredWithSources.Sources)
                         {
                             var snippet = source is TextSearchResult textSource ? textSource.Content : "N/A";
-                            sourcesTable.AddRow(source.Name, source.Url, snippet[..Math.Min(50, snippet.Length)]);
+                            sourcesTable.AddRow(source.Name, source.Url, Markup.Escape( snippet[..Math.Min(50, snippet.Length)]));
                         }
                         AnsiConsole.Write(sourcesTable);
                     }
@@ -399,7 +399,7 @@ void DisplaySearchResults(SearchResponse response, OutputType outputType)
 
                     foreach (var source in answerResponse.Sources)
                     {
-                        sourcesTable.AddRow(source.Name, source.Url, source.Snippet[..Math.Min(50, source.Snippet.Length)]);
+                        sourcesTable.AddRow(source.Name, source.Url, Markup.Escape( source.Snippet[..Math.Min(50, source.Snippet.Length)]));
                     }
                     AnsiConsole.Write(sourcesTable);
                 }
@@ -443,7 +443,7 @@ void DisplaySearchResults(SearchResponse response, OutputType outputType)
                     foreach (var source in structuredWithSourcesResponse.Sources)
                     {
                         var snippet = source is TextSearchResult textSource ? textSource.Content : "N/A";
-                        sourcesTable.AddRow(source.Name, source.Url, snippet[..Math.Min(50, snippet.Length)]);
+                        sourcesTable.AddRow(source.Name, source.Url,Markup.Escape( snippet[..Math.Min(50, snippet.Length)]));
                     }
                     AnsiConsole.Write(sourcesTable);
                 }
