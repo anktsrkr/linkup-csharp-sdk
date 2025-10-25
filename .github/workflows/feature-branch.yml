@@ -7,9 +7,10 @@ on:
   push:
     branches:
       - "feat/**"
+    paths:
+      - 'src/LinkupSdk/**'
 
 env:
-  DOTNET_VERSION: "8.0.x"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
