@@ -1,7 +1,7 @@
 name: Merge to Releases Branch
 
 permissions:
-  contents: read
+  contents: write
   packages: write
   actions: write
 
@@ -60,18 +60,23 @@ jobs:
 
       - name: Create Pre-release on GitHub
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/github-script@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.RC_VERSION }}
-          release_name: Release Candidate ${{ env.RC_VERSION }}
-          body: |
-            Release Candidate ${{ env.RC_VERSION }}
-
-            This is an automatically generated pre-release from the releases branch.
-          draft: false
-          prerelease: true
+          script: |
+            const { owner, repo } = context.repo;
+            const tagName = process.env.RC_VERSION;
+            
+            await github.rest.repos.createRelease({
+              owner,
+              repo,
+              tag_name: tagName,
+              name: `Release Candidate ${tagName}`,
+              body: `Release Candidate ${tagName}\n\nThis is an automatically generated pre-release from the releases branch.`,
+              draft: false,
+              prerelease: true
+            });
 
       - name: Restore dependencies
         run: dotnet restore

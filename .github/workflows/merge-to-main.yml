@@ -1,7 +1,7 @@
 name: Merge to Main Branch
 
 permissions:
-  contents: read
+  contents: write
   packages: write
   actions: write
 
@@ -60,18 +60,23 @@ jobs:
 
       - name: Create Stable Release on GitHub
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/github-script@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.STABLE_VERSION }}
-          release_name: Release ${{ env.STABLE_VERSION }}
-          body: |
-            Release ${{ env.STABLE_VERSION }}
-
-            This is an automatically generated stable release from the main branch.
-          draft: false
-          prerelease: false
+          script: |
+            const { owner, repo } = context.repo;
+            const tagName = process.env.STABLE_VERSION;
+            
+            await github.rest.repos.createRelease({
+              owner,
+              repo,
+              tag_name: tagName,
+              name: `Release ${tagName}`,
+              body: `Release ${tagName}\n\nThis is an automatically generated stable release from the main branch.`,
+              draft: false,
+              prerelease: false
+            });
 
       - name: Restore dependencies
         run: dotnet restore
