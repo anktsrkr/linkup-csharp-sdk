@@ -1,5 +1,10 @@
 name: Merge to Main Branch
 
+permissions:
+  contents: read
+  packages: write
+  actions: write
+
 on:
   push:
     branches:

@@ -1,5 +1,9 @@
 name: PR to Releases Branch
 
+permissions:
+  contents: read
+  packages: write
+
 on:
   pull_request:
     branches:
