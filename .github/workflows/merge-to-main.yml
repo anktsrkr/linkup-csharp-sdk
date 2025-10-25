@@ -42,7 +42,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v0.9.15
         with:
           useConfigFile: true
-          configFilePath: GitVersion.yml
+          configFilePath: GitVersion_LinkupSdk.yml
 
       - name: Display Version
         run: |
@@ -100,10 +100,10 @@ jobs:
       - name: Run Tests for .NET 10.0
         run: dotnet test --no-build --configuration Release --framework net10.0 --logger trx --results-directory ./TestResults
 
-      - name: Pack NuGet Package
+      - name: Pack LinkupSdk NuGet Package
         run: |
           # Use the stable version for the package
-          dotnet pack --no-build --configuration Release --output ./nupkgs /p:PackageVersion=${{ env.STABLE_VERSION }}
+          dotnet pack src/LinkupSdk/LinkupSdk.csproj --no-build --configuration Release --output ./nupkgs /p:PackageVersion=${{ env.STABLE_VERSION }}
 
       - name: Upload NuGet Package
         uses: actions/upload-artifact@v4
@@ -113,24 +113,28 @@ jobs:
 
       - name: Deploy to GitHub Package Registry
         run: |
-          # Get the NuGet package file
-          NUPKG_FILE=$(find ./nupkgs -name "*.nupkg" -type f)
-          if [ -n "$NUPKG_FILE" ]; then
-            dotnet nuget push $NUPKG_FILE --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
-          else
-            echo "No NuGet package found to deploy"
-            exit 1
-          fi
+          # Get all NuGet package files
+          for NUPKG_FILE in ./nupkgs/*.nupkg; do
+            if [ -f "$NUPKG_FILE" ]; then
+              echo "Deploying $NUPKG_FILE"
+              dotnet nuget push $NUPKG_FILE --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
+            else
+              echo "No NuGet packages found to deploy"
+              exit 1
+            fi
+          done
 
       - name: Deploy to NuGet.org
         run: |
-          # Get the NuGet package file
-          NUPKG_FILE=$(find ./nupkgs -name "*.nupkg" -type f)
-          if [ -n "$NUPKG_FILE" ]; then
-            dotnet nuget push $NUPKG_FILE --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
-          else
-            echo "No NuGet package found to deploy"
-            exit 1
-          fi
+          # Get all NuGet package files
+          for NUPKG_FILE in ./nupkgs/*.nupkg; do
+            if [ -f "$NUPKG_FILE" ]; then
+              echo "Deploying $NUPKG_FILE"
+              dotnet nuget push $NUPKG_FILE --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+            else
+              echo "No NuGet packages found to deploy"
+              exit 1
+            fi
+          done
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
