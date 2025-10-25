@@ -50,6 +50,3 @@ jobs:
       if: always()
       with:
         sarif_file: 'trivy-results.sarif'
-
-    - name: Run CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
