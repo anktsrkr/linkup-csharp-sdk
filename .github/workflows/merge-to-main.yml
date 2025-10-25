@@ -56,7 +56,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git tag $STABLE_VERSION
-          git push origin $STABLE_VERSION
+          # Don't push the tag here - let the GitHub API create the tag through the create-release action
 
       - name: Create Stable Release on GitHub
         id: create_release
