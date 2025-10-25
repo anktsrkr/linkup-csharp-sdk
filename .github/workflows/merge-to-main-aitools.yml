@@ -43,7 +43,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v0.9.15
         with:
           useConfigFile: true
-          configFilePath: GitVersion_AITools.yml
+          configFilePath: GitVersion.yml
 
       - name: Display Version
         run: |

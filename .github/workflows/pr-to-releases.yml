@@ -43,7 +43,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v0.9.15
         with:
           useConfigFile: true
-          configFilePath: GitVersion_LinkupSdk.yml
+          configFilePath: GitVersion.yml
 
       - name: Display Version
         run: |
@@ -51,13 +51,13 @@ jobs:
           echo "NuGet Version: ${{ env.GitVersion_NuGetVersion }}"
 
       - name: Restore dependencies
-        run: dotnet restore src/LinkupSdk.csproj
+        run: dotnet restore src/LinkupSdk/LinkupSdk.csproj
 
       - name: Build for .NET 8.0
-        run: dotnet build --no-restore --configuration Release --framework net8.0 src/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net8.0 src/LinkupSdk/LinkupSdk.csproj
 
       - name: Build for .NET 9.0
-        run: dotnet build --no-restore --configuration Release --framework net9.0 src/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net9.0 src/LinkupSdk/LinkupSdk.csproj
 
       - name: Build for .NET 10.0
         run: dotnet build --no-restore --configuration Release --framework net10.0 src/LinkupSdk/LinkupSdk.csproj
@@ -77,7 +77,7 @@ jobs:
           PR_NUMBER=${{ github.event.number }}
           CUSTOM_VERSION="${{ env.GitVersion_Major }}.${{ env.GitVersion_Minor }}.${{ env.GitVersion_Patch }}-pr.${PR_NUMBER}"
           echo "Creating package with version: $CUSTOM_VERSION"
-          dotnet pack src/LinkupSdk.csproj --no-build --configuration Release --output ./nupkgs /p:PackageVersion=$CUSTOM_VERSION
+          dotnet pack src/LinkupSdk/LinkupSdk.csproj --no-build --configuration Release --output ./nupkgs /p:PackageVersion=$CUSTOM_VERSION
 
       - name: Upload NuGet Package
         uses: actions/upload-artifact@v4

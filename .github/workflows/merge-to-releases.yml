@@ -43,7 +43,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v0.9.15
         with:
           useConfigFile: true
-          configFilePath: GitVersion_LinkupSdk.yml
+          configFilePath: GitVersion.yml
 
       - name: Display Version
         run: |
@@ -81,13 +81,13 @@ jobs:
             });
 
       - name: Restore dependencies
-        run: dotnet restore src/LinkupSdk.csproj
+        run: dotnet restore src/LinkupSdk/LinkupSdk.csproj
 
       - name: Build for .NET 8.0
-        run: dotnet build --no-restore --configuration Release --framework net8.0 src/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net8.0 src/LinkupSdk/LinkupSdk.csproj
 
       - name: Build for .NET 9.0
-        run: dotnet build --no-restore --configuration Release --framework net9.0 src/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net9.0 src/LinkupSdk/LinkupSdk.csproj
 
       - name: Build for .NET 10.0
         run: dotnet build --no-restore --configuration Release --framework net10.0 src/LinkupSdk/LinkupSdk.csproj

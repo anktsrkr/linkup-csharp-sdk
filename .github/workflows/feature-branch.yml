@@ -49,16 +49,16 @@ jobs:
           echo "NuGet Version: ${{ env.GitVersion_NuGetVersion }}"
 
       - name: Restore dependencies
-        run: dotnet restore src/LinkupSdk.csproj
+        run: dotnet restore src/LinkupSdk/LinkupSdk.csproj
 
       - name: Build for .NET 8.0
-        run: dotnet build --no-restore --configuration Release --framework net8.0 src/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net8.0 src/LinkupSdk/LinkupSdk.csproj
 
       - name: Build for .NET 9.0
-        run: dotnet build --no-restore --configuration Release --framework net9.0 src/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net9.0 src/LinkupSdk/LinkupSdk.csproj
 
       - name: Build for .NET 10.0
-        run: dotnet build --no-restore --configuration Release --framework net10.0 src/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net10.0 src/LinkupSdk/LinkupSdk.csproj
 
       - name: Run Tests for .NET 8.0
         run: dotnet test --no-build --configuration Release --framework net8.0 --logger trx --results-directory ./TestResults
@@ -79,4 +79,4 @@ jobs:
       - name: Pack NuGet Package
         run: |
           # Create NuGet package for all target frameworks
-          dotnet pack src/LinkupSdk.csproj --no-build --configuration Release --output ./nupkgs
+          dotnet pack src/LinkupSdk/LinkupSdk.csproj --no-build --configuration Release --output ./nupkgs
