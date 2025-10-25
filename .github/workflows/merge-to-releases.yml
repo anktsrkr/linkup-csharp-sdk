@@ -1,5 +1,10 @@
 name: Merge to Releases Branch
 
+permissions:
+  contents: write
+  packages: write
+  actions: write
+
 on:
   push:
     branches:
@@ -51,22 +56,27 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git tag $RC_VERSION
-          git push origin $RC_VERSION
+          # Don't push the tag here - let the GitHub API create the tag through the create-release action
 
       - name: Create Pre-release on GitHub
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/github-script@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.RC_VERSION }}
-          release_name: Release Candidate ${{ env.RC_VERSION }}
-          body: |
-            Release Candidate ${{ env.RC_VERSION }}
-
-            This is an automatically generated pre-release from the releases branch.
-          draft: false
-          prerelease: true
+          script: |
+            const { owner, repo } = context.repo;
+            const tagName = process.env.RC_VERSION;
+            
+            await github.rest.repos.createRelease({
+              owner,
+              repo,
+              tag_name: tagName,
+              name: `Release Candidate ${tagName}`,
+              body: `Release Candidate ${tagName}\n\nThis is an automatically generated pre-release from the releases branch.`,
+              draft: false,
+              prerelease: true
+            });
 
       - name: Restore dependencies
         run: dotnet restore
