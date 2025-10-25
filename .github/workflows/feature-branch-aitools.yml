@@ -79,4 +79,4 @@ jobs:
       - name: Pack NuGet Package
         run: |
           # Create NuGet package for all target frameworks
-          dotnet pack --no-build --configuration Release --output ./nupkgs
+          dotnet pack src/LinkupSdk.AITools/LinkupSdk.AITools.csproj --no-build --configuration Release --output ./nupkgs
