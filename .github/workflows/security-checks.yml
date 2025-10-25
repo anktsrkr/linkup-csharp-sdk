@@ -35,7 +35,7 @@ jobs:
       run: dotnet tool install --global dotnet-outdated-tool
 
     - name: Check for outdated dependencies
-      run: dotnet outdated --outdated
+      run: dotnet-outdated
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
