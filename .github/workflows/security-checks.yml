@@ -8,13 +8,16 @@ on:
   push:
     branches:
       - "**"
+    paths:
+      - 'src/LinkupSdk/**'
   pull_request:
     branches:
       - "main"
       - "releases/*"
+    paths:
+      - 'src/LinkupSdk/**'
 
 env:
-  DOTNET_VERSION: "8.0.x"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
