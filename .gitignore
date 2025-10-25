@@ -3,8 +3,8 @@
 ################################################################################
 
 # Build outputs
-/src/LinkupSdk/bin
-/src/LinkupSdk/obj
+**/**/bin/
+**/**/obj/
 
 # User-specific files
 /.vs
@@ -34,3 +34,4 @@ TestResults/
 .Trashes
 ehthumbs.db
 Thumbs.db
+appsettings.json
