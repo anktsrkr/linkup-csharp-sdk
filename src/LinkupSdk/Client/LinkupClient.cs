@@ -40,10 +40,7 @@ public class LinkupClient(HttpClient httpClient, IOptionsMonitor<LinkupConfig> c
     /// <exception cref="LinkupException">Thrown when the API returns an error response with structured error information</exception>
     public async Task<SearchResponse> SearchAsync(SearchRequest request, CancellationToken cancellationToken = default)
     {
-        if (request.OutputType == OutputType.structured)
-        {
-            throw new ArgumentException("For OutputType.structured, use the generic SearchAsync<T> method instead.", nameof(request));
-        }
+    
 
         var response = await _httpClient.PostAsJsonAsync(_config.SearchEndpoint, request, cancellationToken);
 
@@ -59,7 +56,23 @@ public class LinkupClient(HttpClient httpClient, IOptionsMonitor<LinkupConfig> c
                 throw new LinkupException((int)response.StatusCode, $"API request failed with status code {response.StatusCode}");
             }
         }
-        return await response.Content.ReadFromJsonAsync<SearchResponse>(cancellationToken) ?? throw new InvalidOperationException("Failed to deserialize response");
+
+        if (request.OutputType == OutputType.structured)
+        {
+            if (request.IncludeSources == true)
+            {
+                var structuredResponseWithSources = await response.Content.ReadFromJsonAsync<StructuredResponseWithSources<dynamic>>(cancellationToken) ?? throw new InvalidOperationException("Failed to deserialize response");
+                return structuredResponseWithSources;
+            }
+            else
+            {
+                var structuredResponse = await response.Content.ReadFromJsonAsync<dynamic>(cancellationToken) ?? throw new InvalidOperationException("Failed to deserialize response");
+                return new StructuredResponse<dynamic> { Data = structuredResponse };
+            }
+        }
+        else {
+            return await response.Content.ReadFromJsonAsync<SearchResponse>(cancellationToken) ?? throw new InvalidOperationException("Failed to deserialize response");
+        }
     }
 
     /// <summary>

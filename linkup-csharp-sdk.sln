@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{5AFD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkupSdk.Console.Example", "samples\LinkupSdk.Console.Example\LinkupSdk.Console.Example.csproj", "{3F290B95-543C-40E9-8EF2-54A700B06758}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkupSdk.AITools", "src\LinkupSdk.AITools\LinkupSdk.AITools.csproj", "{2AFC8F69-756A-4D2E-B26C-DF109E66D685}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinkupSdk.AITools.Example", "samples\LinkupSdk.AITools.Example\LinkupSdk.AITools.Example.csproj", "{CF74E314-80BB-4813-8D05-644E253CAC4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +29,14 @@ Global
 		{3F290B95-543C-40E9-8EF2-54A700B06758}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F290B95-543C-40E9-8EF2-54A700B06758}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F290B95-543C-40E9-8EF2-54A700B06758}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AFC8F69-756A-4D2E-B26C-DF109E66D685}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AFC8F69-756A-4D2E-B26C-DF109E66D685}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AFC8F69-756A-4D2E-B26C-DF109E66D685}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AFC8F69-756A-4D2E-B26C-DF109E66D685}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF74E314-80BB-4813-8D05-644E253CAC4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF74E314-80BB-4813-8D05-644E253CAC4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF74E314-80BB-4813-8D05-644E253CAC4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF74E314-80BB-4813-8D05-644E253CAC4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +44,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6BF47289-678E-821C-BC18-32CF03A64C7E} = {6F9AB1CA-E743-48D8-8D6F-685601F9CDF8}
 		{3F290B95-543C-40E9-8EF2-54A700B06758} = {5AFD5513-7159-4350-8178-38DC57845CC6}
+		{2AFC8F69-756A-4D2E-B26C-DF109E66D685} = {6F9AB1CA-E743-48D8-8D6F-685601F9CDF8}
+		{CF74E314-80BB-4813-8D05-644E253CAC4D} = {5AFD5513-7159-4350-8178-38DC57845CC6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9BFD2A7B-C954-4907-B224-33BFFA7136DF}

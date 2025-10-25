@@ -1,4 +1,4 @@
-name: PR to Main Branch
+name: PR to Main Branch - LinkupSdk.AITools
 
 permissions:
   contents: read
@@ -10,7 +10,7 @@ on:
       - "main"
     types: [opened, synchronize, reopened]
     paths:
-      - 'src/LinkupSdk/**'
+      - 'src/LinkupSdk.AITools/**'
   workflow_dispatch:
 
 env:
@@ -51,16 +51,16 @@ jobs:
           echo "NuGet Version: ${{ env.GitVersion_NuGetVersion }}"
 
       - name: Restore dependencies
-        run: dotnet restore src/LinkupSdk/LinkupSdk.csproj
+        run: dotnet restore src/LinkupSdk.AITools/LinkupSdk.AITools.csproj
 
       - name: Build for .NET 8.0
-        run: dotnet build --no-restore --configuration Release --framework net8.0 src/LinkupSdk/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net8.0 src/LinkupSdk.AITools/LinkupSdk.AITools.csproj
 
       - name: Build for .NET 9.0
-        run: dotnet build --no-restore --configuration Release --framework net9.0 src/LinkupSdk/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net9.0 src/LinkupSdk.AITools/LinkupSdk.AITools.csproj
 
       - name: Build for .NET 10.0
-        run: dotnet build --no-restore --configuration Release --framework net10.0 src/LinkupSdk/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net10.0 src/LinkupSdk.AITools/LinkupSdk.AITools.csproj
 
       - name: Run Tests for .NET 8.0
         run: dotnet test --no-build --configuration Release --framework net8.0 --logger trx --results-directory ./TestResults
@@ -71,23 +71,23 @@ jobs:
       - name: Run Tests for .NET 10.0
         run: dotnet test --no-build --configuration Release --framework net10.0 --logger trx --results-directory ./TestResults
 
-      - name: Pack LinkupSdk NuGet Package
+      - name: Pack LinkupSdk.AITools NuGet Package
         run: |
           # Create a custom version for PR builds
           PR_NUMBER=${{ github.event.number }}
           CUSTOM_VERSION="${{ env.GitVersion_Major }}.${{ env.GitVersion_Minor }}.${{ env.GitVersion_Patch }}-pr.${PR_NUMBER}"
           echo "Creating package with version: $CUSTOM_VERSION"
-          dotnet pack src/LinkupSdk/LinkupSdk.csproj --no-build --configuration Release --output ./nupkgs /p:PackageVersion=$CUSTOM_VERSION
+          dotnet pack src/LinkupSdk.AITools/LinkupSdk.AITools.csproj --no-build --configuration Release --output ./nupkgs /p:PackageVersion=$CUSTOM_VERSION
 
       - name: Upload NuGet Package
         uses: actions/upload-artifact@v4
         with:
-          name: nuget-package
+          name: nuget-package-aitools
           path: ./nupkgs/*.nupkg
 
       - name: Deploy to GitHub Package Registry
         run: |
-          # Get all NuGet package files
+          # Get the NuGet package file
           for NUPKG_FILE in ./nupkgs/*.nupkg; do
             if [ -f "$NUPKG_FILE" ]; then
               echo "Deploying $NUPKG_FILE"

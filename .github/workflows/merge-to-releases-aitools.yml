@@ -1,4 +1,4 @@
-name: Merge to Releases Branch
+name: Merge to Releases Branch - LinkupSdk.AITools
 
 permissions:
   contents: write
@@ -10,7 +10,7 @@ on:
     branches:
       - "releases/*"
     paths:
-      - 'src/LinkupSdk/**'
+      - 'src/LinkupSdk.AITools/**'
   workflow_dispatch:
 
 env:
@@ -52,12 +52,12 @@ jobs:
 
       - name: Create Release Tag
         run: |
-          # Create a release candidate tag
+          # Create a release candidate tag for AITools
           RC_VERSION="${{ env.GitVersion_Major }}.${{ env.GitVersion_Minor }}.${{ env.GitVersion_Patch }}-rc.${{ env.GitVersion_CommitsSinceVersionSource }}"
           echo "RC_VERSION=$RC_VERSION" >> $GITHUB_ENV
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git tag $RC_VERSION
+          git tag aitools-$RC_VERSION
           # Don't push the tag here - let the GitHub API create the tag through the create-release action
 
       - name: Create Pre-release on GitHub
@@ -68,29 +68,29 @@ jobs:
         with:
           script: |
             const { owner, repo } = context.repo;
-            const tagName = process.env.RC_VERSION;
+            const tagName = `aitools-${process.env.RC_VERSION}`;
             
             await github.rest.repos.createRelease({
               owner,
               repo,
               tag_name: tagName,
-              name: `Release Candidate ${tagName}`,
-              body: `Release Candidate ${tagName}\n\nThis is an automatically generated pre-release from the releases branch.`,
+              name: `LinkupSdk.AITools Release Candidate ${tagName}`,
+              body: `LinkupSdk.AITools Release Candidate ${tagName}\n\nThis is an automatically generated pre-release from the releases branch.`,
               draft: false,
               prerelease: true
             });
 
       - name: Restore dependencies
-        run: dotnet restore src/LinkupSdk/LinkupSdk.csproj
+        run: dotnet restore src/LinkupSdk.AITools/LinkupSdk.AITools.csproj
 
       - name: Build for .NET 8.0
-        run: dotnet build --no-restore --configuration Release --framework net8.0 src/LinkupSdk/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net8.0 src/LinkupSdk.AITools/LinkupSdk.AITools.csproj
 
       - name: Build for .NET 9.0
-        run: dotnet build --no-restore --configuration Release --framework net9.0 src/LinkupSdk/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net9.0 src/LinkupSdk.AITools/LinkupSdk.AITools.csproj
 
       - name: Build for .NET 10.0
-        run: dotnet build --no-restore --configuration Release --framework net10.0 src/LinkupSdk/LinkupSdk.csproj
+        run: dotnet build --no-restore --configuration Release --framework net10.0 src/LinkupSdk.AITools/LinkupSdk.AITools.csproj
 
       - name: Run Tests for .NET 8.0
         run: dotnet test --no-build --configuration Release --framework net8.0 --logger trx --results-directory ./TestResults
@@ -101,11 +101,6 @@ jobs:
       - name: Run Tests for .NET 10.0
         run: dotnet test --no-build --configuration Release --framework net10.0 --logger trx --results-directory ./TestResults
 
-      - name: Pack LinkupSdk NuGet Package
-        run: |
-          # Use the RC version for the package
-          dotnet pack src/LinkupSdk/LinkupSdk.csproj --no-build --configuration Release --output ./nupkgs /p:PackageVersion=${{ env.RC_VERSION }}
-          
       - name: Pack LinkupSdk.AITools NuGet Package
         run: |
           # Use the RC version for the package
@@ -114,12 +109,12 @@ jobs:
       - name: Upload NuGet Package
         uses: actions/upload-artifact@v4
         with:
-          name: nuget-package-rc
+          name: nuget-package-aitools-rc
           path: ./nupkgs/*.nupkg
 
       - name: Deploy to GitHub Package Registry
         run: |
-          # Get all NuGet package files
+          # Get the NuGet package file
           for NUPKG_FILE in ./nupkgs/*.nupkg; do
             if [ -f "$NUPKG_FILE" ]; then
               echo "Deploying $NUPKG_FILE"
