@@ -246,6 +246,97 @@ catch (LinkupException ex)
 }
 ```
 
+## AI Tools
+
+The LinkupSdk includes AI tools that can be used with Microsoft.Extensions.AI for building AI-powered applications. These tools provide a bridge between AI models and the Linkup API, allowing AI agents to perform web searches, content fetching, and balance inquiries programmatically.
+
+### Installation
+
+To use the AI tools, install the LinkupSdk.AITools package via NuGet:
+
+```
+dotnet add package LinkupSdk.AITools
+```
+
+### Usage with Microsoft.Extensions.AI
+
+```csharp
+using LinkupSdk.AITools;
+using LinkupSdk.Extensions;
+using Microsoft.Extensions.AI;
+using Microsoft.Extensions.DependencyInjection;
+
+// Setup dependency injection
+var services = new ServiceCollection();
+services.AddLinkupClient(config =>
+{
+    config.ApiKey = "your-api-key";
+});
+var serviceProvider = services.BuildServiceProvider();
+
+// Create the LinkupTools instance
+var client = serviceProvider.GetRequiredService<LinkupClient>();
+var linkupTools = new LinkupTools(client);
+
+// Use with an AI model (example with Azure OpenAI)
+var chatClient = new AzureOpenAIChatClient(new Uri("https://your-resource.openai.azure.com/"), new AzureKeyCredential("your-key"));
+chatClient = chatClient.WithTools(linkupTools.GetAllTools());
+
+// Execute chat with tools
+var response = await chatClient.CompleteAsync("Search for the latest developments in renewable energy.");
+Console.WriteLine(response.Message.Text);
+```
+
+### Available Tools
+
+The LinkupTools class provides the following AI tools for different operations:
+
+#### Search Tool
+- **Function**: `SearchAsync`
+- **Description**: Performs a web search using the Linkup API with customizable parameters
+- **Parameters**:
+  - `query`: The search query
+  - `depth`: Search depth (standard or deep)
+  - `outputType`: Output type (searchResults, sourcedAnswer, or structured)
+  - `includeImages`: Whether to include images in results
+  - `includeDomains`: Domains to include in search (comma-separated)
+  - `excludeDomains`: Domains to exclude from search (comma-separated)
+  - `fromDate`: Start date for date range filtering (YYYY-MM-DD)
+  - `toDate`: End date for date range filtering (YYYY-MM-DD)
+  - `includeInlineCitations`: Whether to include inline citations for sourced answers
+
+#### Structured Search Tool
+- **Function**: `SearchStructuredAsync`
+- **Description**: Performs a structured web search using the Linkup API with JSON schema validation
+- **Parameters**:
+  - `query`: The search query
+  - `structuredSchema`: JSON schema for structured output
+  - `depth`: Search depth (standard or deep)
+  - `includeSources`: Whether to include sources in the response
+  - `includeImages`: Whether to include images in results
+  - `includeDomains`: Domains to include in search (comma-separated)
+  - `excludeDomains`: Domains to exclude from search (comma-separated)
+  - `fromDate`: Start date for date range filtering (YYYY-MM-DD)
+  - `toDate`: End date for date range filtering (YYYY-MM-DD)
+
+#### Fetch Content Tool
+- **Function**: `FetchContentAsync`
+- **Description**: Fetches content from a URL using the Linkup API
+- **Parameters**:
+  - `url`: The URL to fetch content from
+  - `renderJs`: Whether to render JavaScript on the page
+  - `includeRawHtml`: Whether to include raw HTML in the response
+  - `extractImages`: Whether to extract images from the page
+
+#### Get Balance Tool
+- **Function**: `GetBalanceAsync`
+- **Description**: Gets the current account balance/credits from the Linkup API
+- **Parameters**: None
+
+### Approval-Required Tools
+
+For scenarios requiring explicit human approval before executing operations, LinkupTools provides approval-required versions of all tools. These tools wrap the standard tools with an approval mechanism that ensures human consent before execution. To access these tools, use the `GetAllToolsRequiringApproval()` method instead of `GetAllTools()`.
+
 ## Requirements
 
 - .NET 8.0 or later

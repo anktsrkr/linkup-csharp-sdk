@@ -8,8 +8,19 @@ using Microsoft.Extensions.AI;
 namespace LinkupSdk.AITools;
 
 /// <summary>
-/// AI tools for Linkup SDK operations that can be used with Microsoft.Extensions.AI
+/// Provides AI tools for Linkup SDK operations that can be used with Microsoft.Extensions.AI.
+/// These tools enable AI agents to perform web searches, content fetching, and balance inquiries programmatically.
+/// The class offers both standard tools and approval-required versions for scenarios requiring human consent before execution.
 /// </summary>
+/// <remarks>
+/// The LinkupTools class provides four main AI tools:
+/// 1. SearchTool - Performs web searches with customizable parameters
+/// 2. SearchStructuredTool - Performs structured web searches with JSON schema validation
+/// 3. FetchContentTool - Fetches content from URLs with options for JavaScript rendering and image extraction
+/// 4. GetBalanceTool - Retrieves account balance information
+///
+/// Each tool has an approval-required variant that ensures explicit human consent before execution.
+/// </remarks>
 public class LinkupTools
 {
     private readonly LinkupClient _client;
@@ -275,7 +286,7 @@ public class LinkupTools
         try
         {
             var response = await _client.GetBalanceAsync();
-            return $"Current balance: {response.Balance}€";
+            return $"Current balance: {response.Balance}ï¿½";
         }
         catch (LinkupException ex)
         {
