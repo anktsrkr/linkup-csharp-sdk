@@ -17,6 +17,7 @@ branches:
     mode: ContinuousDeployment
     tag: rc
     increment: Patch
+    source-branches: ["main"]
     is-mainline: false
     prevent-increment-of-merged-branch-version: false
     track-merge-target: false
