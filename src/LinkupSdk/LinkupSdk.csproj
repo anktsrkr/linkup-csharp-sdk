@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/anktsrkr/linkup-csharp-sdk</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>../../README.md</PackageReadmeFile>
-    <PackageIcon>../icon.png</PackageIcon>
+    <PackageIcon>../../icon.png</PackageIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="/" />
-    <None Include="../icon.png" Pack="true" PackagePath="/"/>
+    <None Include="../../icon.png" Pack="true" PackagePath="/"/>
   </ItemGroup>
 
   <ItemGroup>
