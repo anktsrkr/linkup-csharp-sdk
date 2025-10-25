@@ -11,6 +11,7 @@ on:
       - "releases/*"
     paths:
       - 'src/LinkupSdk/**'
+  workflow_dispatch:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

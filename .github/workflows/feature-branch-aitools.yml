@@ -1,14 +1,12 @@
-name: PR to Main Branch - LinkupSdk.AITools
+name: Feature Branch Build AITools
 
 permissions:
   contents: read
-  packages: write
 
 on:
-  pull_request:
+  push:
     branches:
-      - "main"
-    types: [opened, synchronize, reopened]
+      - "feat/**"
     paths:
       - 'src/LinkupSdk.AITools/**'
   workflow_dispatch:
@@ -17,7 +15,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  build-and-package:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -71,29 +69,14 @@ jobs:
       - name: Run Tests for .NET 10.0
         run: dotnet test --no-build --configuration Release --framework net10.0 --logger trx --results-directory ./TestResults
 
-      - name: Pack LinkupSdk.AITools NuGet Package
-        run: |
-          # Create a custom version for PR builds
-          PR_NUMBER=${{ github.event.number }}
-          CUSTOM_VERSION="${{ env.GitVersion_Major }}.${{ env.GitVersion_Minor }}.${{ env.GitVersion_Patch }}-pr.${PR_NUMBER}"
-          echo "Creating package with version: $CUSTOM_VERSION"
-          dotnet pack src/LinkupSdk.AITools/LinkupSdk.AITools.csproj --no-build --configuration Release --output ./nupkgs /p:PackageVersion=$CUSTOM_VERSION
-
-      - name: Upload NuGet Package
+      - name: Upload Test Results
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: nuget-package-aitools
-          path: ./nupkgs/*.nupkg
+          name: test-results
+          path: ./TestResults
 
-      - name: Deploy to GitHub Package Registry
+      - name: Pack NuGet Package
         run: |
-          # Get the NuGet package file
-          for NUPKG_FILE in ./nupkgs/*.nupkg; do
-            if [ -f "$NUPKG_FILE" ]; then
-              echo "Deploying $NUPKG_FILE"
-              dotnet nuget push $NUPKG_FILE --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
-            else
-              echo "No NuGet packages found to deploy"
-              exit 1
-            fi
-          done
+          # Create NuGet package for all target frameworks
+          dotnet pack --no-build --configuration Release --output ./nupkgs
