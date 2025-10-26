@@ -1,0 +1,99 @@
+name: PR to Main Branch
+
+permissions:
+  contents: read
+  packages: write
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths-ignore:
+      - "README.md"
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build-and-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history needed for GitVersion
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.15
+        with:
+          versionSpec: "5.x"
+
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v0.9.15
+        with:
+          useConfigFile: true
+          configFilePath: GitVersion.yml
+
+      - name: Display Version
+        run: |
+          echo "SemVer: ${{ env.GitVersion_SemVer }}"
+          echo "NuGet Version: ${{ env.GitVersion_NuGetVersion }}"
+
+      - name: Restore dependencies
+        run: dotnet restore src/LinkupSdk.csproj
+
+      - name: Build for .NET 8.0
+        run: dotnet build --no-restore --configuration Release --framework net8.0 src/LinkupSdk.csproj
+
+      - name: Build for .NET 9.0
+        run: dotnet build --no-restore --configuration Release --framework net9.0 src/LinkupSdk.csproj
+
+      - name: Build for .NET 10.0
+        run: dotnet build --no-restore --configuration Release --framework net10.0 src/LinkupSdk.csproj
+
+      - name: Run Tests for .NET 8.0
+        run: dotnet test --no-build --configuration Release --framework net8.0 --logger trx --results-directory ./TestResults
+
+      - name: Run Tests for .NET 9.0
+        run: dotnet test --no-build --configuration Release --framework net9.0 --logger trx --results-directory ./TestResults
+
+      - name: Run Tests for .NET 10.0
+        run: dotnet test --no-build --configuration Release --framework net10.0 --logger trx --results-directory ./TestResults
+
+      - name: Pack LinkupSdk NuGet Package
+        run: |
+          # Create a custom version for PR builds
+          PR_NUMBER=${{ github.event.number }}
+          CUSTOM_VERSION="${{ env.GitVersion_Major }}.${{ env.GitVersion_Minor }}.${{ env.GitVersion_Patch }}-pr.${PR_NUMBER}"
+          echo "Creating package with version: $CUSTOM_VERSION"
+          dotnet pack src/LinkupSdk.csproj --no-build --configuration Release --output ./nupkgs /p:PackageVersion=$CUSTOM_VERSION
+
+      - name: Upload NuGet Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: ./nupkgs/*.nupkg
+
+      - name: Deploy to GitHub Package Registry
+        run: |
+          # Get all NuGet package files
+          for NUPKG_FILE in ./nupkgs/*.nupkg; do
+            if [ -f "$NUPKG_FILE" ]; then
+              echo "Deploying $NUPKG_FILE"
+              dotnet nuget push $NUPKG_FILE --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
+            else
+              echo "No NuGet packages found to deploy"
+              exit 1
+            fi
+          done
